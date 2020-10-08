@@ -1,6 +1,9 @@
 package com.codecool;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ICS 23 Summer 2004
@@ -19,6 +22,7 @@ import java.util.List;
  */
 
 public class WordChecker {
+    private WordList wordList;
     /**
      * Constructor that initializes a new WordChecker with a given WordList.
      *
@@ -26,7 +30,7 @@ public class WordChecker {
      * @see WordList
      */
     public WordChecker(WordList wordList) {
-
+        this.wordList = wordList;
     }
 
 
@@ -38,7 +42,7 @@ public class WordChecker {
      * @return bollean indicating if the word was found or not.
      */
     public boolean wordExists(String word) {
-
+        return wordList.lookup(word);
     }
 
 
@@ -51,6 +55,44 @@ public class WordChecker {
      * @return A list of plausible matches
      */
     public List<String> getSuggestions(String word) {
-
+        List<String> suggestedStrings = new ArrayList<>();
+        if (!wordExists(word)) {
+//            suggestedStrings.addAll(afterSwappingSuggestions(word));
+//            suggestedStrings.addAll(afterInsertingSuggestions(word));
+//            suggestedStrings.addAll(afterDeletingSuggestions(word));
+//            suggestedStrings.addAll(afterReplacingSuggestions(word));
+//            suggestedStrings.addAll(afterSplittingSuggestions(word));
+            suggestedStrings = Stream.of(afterSwappingSuggestions(word), afterInsertingSuggestions(word),
+                    afterDeletingSuggestions(word), afterReplacingSuggestions(word), afterSplittingSuggestions(word))
+                    .flatMap(x -> x.stream())
+                    .collect(Collectors.toList());
+        }
+        return suggestedStrings;
     }
+
+    private List<String> afterSwappingSuggestions(String word){
+        List<String> suggestedStrings = new ArrayList<>();
+        return suggestedStrings;
+    }
+
+    private List<String> afterInsertingSuggestions(String word){
+        List<String> suggestedStrings = new ArrayList<>();
+        return suggestedStrings;
+    }
+
+    private List<String> afterDeletingSuggestions(String word){
+        List<String> suggestedStrings = new ArrayList<>();
+        return suggestedStrings;
+    }
+
+    private List<String> afterReplacingSuggestions(String word){
+        List<String> suggestedStrings = new ArrayList<>();
+        return suggestedStrings;
+    }
+
+    private List<String> afterSplittingSuggestions(String word){
+        List<String> suggestedStrings = new ArrayList<>();
+        return suggestedStrings;
+    }
+
 }
