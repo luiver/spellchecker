@@ -3,15 +3,17 @@ package com.codecool;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class SpellCheck
-{
-    public static void main(final String[] array) {
+public class SpellCheck {
+    public static void main(String[] array) {
+//        array = new String[2];
+//        array[0]= "-better";
+//        array[1]= "/home/luiver/IdeaProjects/spellchecker/src/main/resources/word.txt";
         if (array.length == 0) {
             showUsageMessage();
             return;
         }
         final String s = array[array.length - 1];
-        String s2 = "wordlist.txt";
+        String s2 = "/home/luiver/IdeaProjects/spellchecker/src/main/resources/wordlist.txt";
         StringHasher o = new LousyStringHasher();
         PrintStream out = System.out;
         boolean b = false;
@@ -50,8 +52,7 @@ public class SpellCheck
             if (b) {
                 System.out.println("Checker ran in " + (currentTimeMillis2 - currentTimeMillis) + "ms");
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
