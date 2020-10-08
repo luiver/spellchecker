@@ -10,6 +10,10 @@ package com.codecool;
  */
 
 public class HashTable {
+    private final int tableSize;
+    private final SinglyLinkedList[] table;
+    private final StringHasher stringHasher;
+
     /**
      * The constructor is given a table size (i.e. how big to make the array)
      * and a StringHasher, which is used to hash the strings.
@@ -19,9 +23,15 @@ public class HashTable {
      * @see StringHasher
      */
     public HashTable(int tableSize, StringHasher hasher) {
-
+        this.tableSize = tableSize;
+        this.table = new SinglyLinkedList[tableSize];
+        this.stringHasher = hasher;
     }
 
+    private int getPositionByHash(String s) {
+        int hashcode = stringHasher.hash(s);
+        return Math.abs(hashcode % tableSize);
+    }
 
     /**
      * Takes a string and adds it to the hash table, if it's not already
@@ -30,7 +40,13 @@ public class HashTable {
      * @param s String to add
      */
     public void add(String s) {
-
+        int position = getPositionByHash(s);
+        if (table[position] == null) {
+            table[position] = new SinglyLinkedList();
+        }
+        if (!lookup(s)) {
+            table[position].insert(0, s);
+        }
     }
 
 
@@ -41,7 +57,12 @@ public class HashTable {
      * @param s String to look up
      */
     public boolean lookup(String s) {
-
+        int position = getPositionByHash(s);
+        SinglyLinkedList sll = table[position];
+        if (sll == null){
+            return false;
+        }
+        return sll.search(s) != -1;
     }
 
 
@@ -52,6 +73,10 @@ public class HashTable {
      * @param s String to remove
      */
     public void remove(String s) {
-
+        if (lookup(s)) {
+            int position = getPositionByHash(s);
+            SinglyLinkedList sll = table[position];
+            sll.delete(sll.search(s));
+        }
     }
 }
