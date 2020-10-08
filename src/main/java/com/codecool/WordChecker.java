@@ -56,20 +56,16 @@ public class WordChecker {
     public List<String> getSuggestions(String word) {
         List<String> suggestedStrings = new ArrayList<>();
         if (!wordExists(word)) {
-//            suggestedStrings.addAll(afterSwappingSuggestions(word));
-//            suggestedStrings.addAll(afterInsertingSuggestions(word));
-//            suggestedStrings.addAll(afterDeletingSuggestions(word));
-//            suggestedStrings.addAll(afterReplacingSuggestions(word));
-//            suggestedStrings.addAll(afterSplittingSuggestions(word));
-            suggestedStrings = Stream.of(afterSwappingSuggestions(word), afterInsertingSuggestions(word),
-                    afterDeletingSuggestions(word), afterReplacingSuggestions(word), afterSplittingSuggestions(word))
+            suggestedStrings = Stream.of(afterSwappingLetters(word), afterInsertingLetters(word),
+                    afterDeletingLetters(word), afterReplacingLetters(word), afterSplittingLetters(word))
                     .flatMap(x -> x.stream())
+                    .distinct()
                     .collect(Collectors.toList());
         }
         return suggestedStrings;
     }
 
-    private List<String> afterSwappingSuggestions(String word){
+    private List<String> afterSwappingLetters(String word){
         List<String> suggestedStrings = new ArrayList<>();
         for (int i = 0 ; i < word.toCharArray().length-1; i++){
             char[] tempArrayOfChars = word.toCharArray();
@@ -77,41 +73,67 @@ public class WordChecker {
             tempArrayOfChars[i] = tempArrayOfChars[i+1];
             tempArrayOfChars[i+1] = tempChar;
             String newWord = String.valueOf(tempArrayOfChars);
-            if (wordExists(newWord)) {
-                suggestedStrings.add(newWord);
+            addSuggestionIfWordExists(suggestedStrings, newWord);
+        }
+        return suggestedStrings;
+    }
+
+    private List<String> afterInsertingLetters(String word){
+        List<String> suggestedStrings = new ArrayList<>();
+        for (int i = 0 ; i < word.toCharArray().length; i++){
+            for (char c: aToZCharArray){
+                String newWord = getNewWord(word, i, String.valueOf(c));
+                addSuggestionIfWordExists(suggestedStrings, newWord);
             }
         }
         return suggestedStrings;
     }
 
-    private List<String> afterInsertingSuggestions(String word){
+    private List<String> afterDeletingLetters(String word){
         List<String> suggestedStrings = new ArrayList<>();
+        for (int i = 0; i < word.toCharArray().length; i++){
+            String subStringLeft = word.substring(0, i);
+            String subStringRight = word.substring(i + 1);
+            String newWord = subStringLeft + subStringRight;
+            addSuggestionIfWordExists(suggestedStrings, newWord);
+        }
         return suggestedStrings;
     }
 
-    private List<String> afterDeletingSuggestions(String word){
-        List<String> suggestedStrings = new ArrayList<>();
-        return suggestedStrings;
-    }
-
-    private List<String> afterReplacingSuggestions(String word){
+    private List<String> afterReplacingLetters(String word){
         List<String> suggestedStrings = new ArrayList<>();
         for (int i = 0 ; i < word.toCharArray().length; i++){
             for (char c: aToZCharArray){
                 char[] tempArrayOfChars = word.toCharArray();
                 tempArrayOfChars[i] = c;
                 String newWord = String.valueOf(tempArrayOfChars);
-                if (wordExists(newWord)) {
-                    suggestedStrings.add(newWord);
-                }
+                addSuggestionIfWordExists(suggestedStrings, newWord);
             }
         }
         return suggestedStrings;
     }
 
-    private List<String> afterSplittingSuggestions(String word){
+    private List<String> afterSplittingLetters(String word){
         List<String> suggestedStrings = new ArrayList<>();
+        for (int i = 0; i < word.toCharArray().length; i++){
+            String newWord = getNewWord(word, i, " ");
+            if (wordExists(newWord.split(" ")[0]) && wordExists(newWord.split(" ")[1])) {
+                suggestedStrings.add(newWord);
+            }
+        }
         return suggestedStrings;
+    }
+
+    private String getNewWord(String word, int i, String c) {
+        String subStringLeft = word.substring(0, i);
+        String subStringRight = word.substring(i);
+        return subStringLeft + c + subStringRight;
+    }
+
+    private void addSuggestionIfWordExists(List<String> suggestedStrings, String newWord) {
+        if (wordExists(newWord)) {
+            suggestedStrings.add(newWord);
+        }
     }
 
 }
