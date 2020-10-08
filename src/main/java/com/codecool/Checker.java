@@ -8,19 +8,19 @@ import java.io.FileReader;
 import java.io.PrintStream;
 
 public class Checker {
-    public void check(final String fileName, final String s, final StringHasher stringHasher, final PrintStream printStream) throws IOException {
-        final WordList list = new WordList(s, stringHasher);
-        final BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
-        String x = bufferedReader.readLine();
-        WordLineReader wordLineReader = new WordLineReader(x);
+    public void check(final String wordsToSearchFileName, final String wordListFileName, final StringHasher stringHasher, final PrintStream printStream) throws IOException {
+        final WordList list = new WordList(wordListFileName, stringHasher);
+        final BufferedReader bufferedReader = new BufferedReader(new FileReader(Helper.getPathForResourceFile(wordsToSearchFileName)));
+        String currentWord = bufferedReader.readLine();
+        WordLineReader wordLineReader = new WordLineReader(currentWord);
         final WordChecker wordChecker = new WordChecker(list);
-        while (x != null) {
+        while (currentWord != null) {
             while (wordLineReader.hasNextWord()) {
                 final String upperCase = wordLineReader.nextWord().toUpperCase();
                 if (!wordChecker.wordExists(upperCase)) {
                     final List<String> suggestions = wordChecker.getSuggestions(upperCase);
                     printStream.println();
-                    printStream.println(x);
+                    printStream.println(currentWord);
                     printStream.println("     word not found: " + upperCase);
                     if (suggestions.size() <= 0) {
                         continue;
@@ -32,8 +32,8 @@ public class Checker {
                     }
                 }
             }
-            x = bufferedReader.readLine();
-            wordLineReader = new WordLineReader(x);
+            currentWord = bufferedReader.readLine();
+            wordLineReader = new WordLineReader(currentWord);
         }
         bufferedReader.close();
     }

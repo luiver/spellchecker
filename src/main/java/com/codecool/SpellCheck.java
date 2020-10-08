@@ -5,39 +5,36 @@ import java.io.PrintStream;
 
 public class SpellCheck {
     public static void main(String[] array) {
-//        array = new String[2];
-//        array[0]= "-better";
-//        array[1]= "/home/luiver/IdeaProjects/spellchecker/src/main/resources/word.txt";
         if (array.length == 0) {
             showUsageMessage();
             return;
         }
-        final String s = array[array.length - 1];
-        String s2 = "/home/luiver/IdeaProjects/spellchecker/src/main/resources/wordlist.txt";
-        StringHasher o = new LousyStringHasher();
+        final String wordsToSearchFileName = array[array.length - 1];
+        String defaultWordListFileName = Helper.getPathForResourceFile("wordlist.txt");
+        StringHasher hasher = new LousyStringHasher();
         PrintStream out = System.out;
-        boolean b = false;
+        boolean doCheckPerformance = false;
         for (int i = 0; i < array.length - 1; ++i) {
             switch (array[i]) {
                 case "-degenerate":
-                    o = new DegenerateStringHasher();
+                    hasher = new DegenerateStringHasher();
                     break;
                 case "-lousy":
-                    o = new LousyStringHasher();
+                    hasher = new LousyStringHasher();
                     break;
                 case "-better":
-                    o = new BetterStringHasher();
+                    hasher = new BetterStringHasher();
                     break;
                 case "-quiet":
                     out = new PrintStream(new NullOutputStream());
-                    b = true;
+                    doCheckPerformance = true;
                     break;
                 case "-wordlist":
                     if (++i >= array.length - 1) {
                         showUsageMessage();
                         return;
                     }
-                    s2 = array[i];
+                    defaultWordListFileName = array[i];
                     break;
             }
         }
@@ -47,9 +44,9 @@ public class SpellCheck {
         }
         try {
             final long currentTimeMillis = System.currentTimeMillis();
-            new Checker().check(s, s2, o, out);
+            new Checker().check(wordsToSearchFileName, defaultWordListFileName, hasher, out);
             final long currentTimeMillis2 = System.currentTimeMillis();
-            if (b) {
+            if (doCheckPerformance) {
                 System.out.println("Checker ran in " + (currentTimeMillis2 - currentTimeMillis) + "ms");
             }
         } catch (IOException ex) {

@@ -80,7 +80,7 @@ public class WordChecker {
 
     private List<String> afterInsertingLetters(String word){
         List<String> suggestedStrings = new ArrayList<>();
-        for (int i = 0 ; i < word.toCharArray().length; i++){
+        for (int i = 0 ; i < word.toCharArray().length+1; i++){
             for (char c: aToZCharArray){
                 String newWord = getNewWord(word, i, String.valueOf(c));
                 addSuggestionIfWordExists(suggestedStrings, newWord);
