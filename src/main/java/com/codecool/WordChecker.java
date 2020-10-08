@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 public class WordChecker {
     private WordList wordList;
+    private final char[] aToZCharArray = "abcdefghijklmnopqrstuvwxyz".toUpperCase().toCharArray();
     /**
      * Constructor that initializes a new WordChecker with a given WordList.
      *
@@ -32,7 +33,6 @@ public class WordChecker {
     public WordChecker(WordList wordList) {
         this.wordList = wordList;
     }
-
 
     /**
      * Returns true if the given word is in the WordList passed to the
@@ -44,7 +44,6 @@ public class WordChecker {
     public boolean wordExists(String word) {
         return wordList.lookup(word);
     }
-
 
     /**
      * Returns an ArrayList of Strings containing the suggestions for the
@@ -72,6 +71,16 @@ public class WordChecker {
 
     private List<String> afterSwappingSuggestions(String word){
         List<String> suggestedStrings = new ArrayList<>();
+        for (int i = 0 ; i < word.toCharArray().length-1; i++){
+            char[] tempArrayOfChars = word.toCharArray();
+            char tempChar = tempArrayOfChars[i];
+            tempArrayOfChars[i] = tempArrayOfChars[i+1];
+            tempArrayOfChars[i+1] = tempChar;
+            String newWord = String.valueOf(tempArrayOfChars);
+            if (wordExists(newWord)) {
+                suggestedStrings.add(newWord);
+            }
+        }
         return suggestedStrings;
     }
 
@@ -87,6 +96,16 @@ public class WordChecker {
 
     private List<String> afterReplacingSuggestions(String word){
         List<String> suggestedStrings = new ArrayList<>();
+        for (int i = 0 ; i < word.toCharArray().length; i++){
+            for (char c: aToZCharArray){
+                char[] tempArrayOfChars = word.toCharArray();
+                tempArrayOfChars[i] = c;
+                String newWord = String.valueOf(tempArrayOfChars);
+                if (wordExists(newWord)) {
+                    suggestedStrings.add(newWord);
+                }
+            }
+        }
         return suggestedStrings;
     }
 
